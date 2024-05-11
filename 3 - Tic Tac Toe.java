@@ -1,143 +1,151 @@
-package Tisha_Hirpara;
+package Basics;
 
 import java.util.Arrays;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
-class TicTacToc {
-    static int r1 = 3;
-    static int r2 = 3;
-    static int r3 = 3;
-    static int c1 = 3;
-    static int c2 = 3;
-    static int c3 = 3;
-    static int d1 = 3;
-    static int d2 = 3;
-    static String Green = "\u001b[32m";
-    static String Reset = "\u001b[32;1m";
-    static String Red = "\u001b[31;1m";
+class TicTacToe {
+    // Track remaining spaces in rows, columns, and diagonals
+    static int[] remainingRows = {3, 3, 3};
+    static int[] remainingCols = {3, 3, 3};
+    static int[] remainingDiagonals = {3, 3}; // Two diagonals
+    static final String GREEN = "\u001b[32m";
+    static final String RESET = "\u001b[0m"; // Reset to default color
+    static final String RED = "\u001b[31m";
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        char[][] mat = new char[3][3];
-        insertSpaces(mat);
+        Scanner scanner = new Scanner(System.in);
+        char[][] board = new char[3][3];
+        initializeBoard(board);
+
+        // Main game loop
         do {
-            System.out.print("Player 1 turn (X): ");
-            int xtern = sc.nextInt();
-            inputData(mat, xtern, 'X');
+            // Player 1's turn (X)
+            System.out.print("Player 1's turn (X): ");
+            int position = getPosition(scanner);
+            makeMove(board, position, 'X');
             System.out.println();
-            printMatrix(mat);
+            printBoard(board);
             System.out.println();
-            if (isComplete(mat, 'X')) {
-                System.out.println(Green + "\nPlayer 1 is winner..!" + Reset);
-                break;
-            }
-            if (allDataContains()) {
-                System.out.println(Red + "\nNeither Player 1 nor Player 2 is Winner!" + Reset);
+
+            // Check if player 1 wins
+            if (isWinner(board, 'X')) {
+                System.out.println(GREEN + "\nPlayer 1 wins!" + RESET);
                 break;
             }
 
-            System.out.print("Player 2 turn (O): ");
-            int ytern = sc.nextInt();
-            inputData(mat, ytern, 'O');
-            System.out.println();
-            printMatrix(mat);
-            System.out.println();
-            if (isComplete(mat, 'O')) {
-                System.out.println(Green + "\nPlayer 2 is winner..!" + Reset);
+            // Check for draw
+            if (isBoardFull(board)) {
+                System.out.println(RED + "\nIt's a draw!" + RESET);
                 break;
             }
-            if (allDataContains()) {
-                System.out.println(Red + "\nNeither Player 1 nor Player 2 is Winner!" + Reset);
+
+            // Player 2's turn (O)
+            System.out.print("Player 2's turn (O): ");
+            position = getPosition(scanner);
+            makeMove(board, position, 'O');
+            System.out.println();
+            printBoard(board);
+            System.out.println();
+
+            // Check if player 2 wins
+            if (isWinner(board, 'O')) {
+                System.out.println(GREEN + "\nPlayer 2 wins!" + RESET);
+                break;
+            }
+
+            // Check for draw again
+            if (isBoardFull(board)) {
+                System.out.println(RED + "\nIt's a draw!" + RESET);
                 break;
             }
 
         } while (true);
     }
 
-    public static boolean allDataContains() {
-        return (r1 == 0 && r2 == 0 && r3 == 0 && c1 == 0 && c2 == 0 && c3 == 0 && d1 == 0 && d2 == 0);
-    }
-
-    public static void inputData(char[][] mat, int pos, char value) {
-        int r, c;
-        if (pos == 1) {
-            r = 0;
-            c = 0;
-            r1--;
-            c1--;
-            d1--;
-        } else if (pos == 2) {
-            r = 0;
-            c = 1;
-            r1--;
-            c2--;
-        } else if (pos == 3) {
-            r = 0;
-            c = 2;
-            r1--;
-            c3--;
-            d2--;
-        } else if (pos == 4) {
-            r = 1;
-            c = 0;
-            r2--;
-            c1--;
-        } else if (pos == 5) {
-            r = 1;
-            c = 1;
-            r2--;
-            c2--;
-            d1--;
-            d2--;
-        } else if (pos == 6) {
-            r = 1;
-            c = 2;
-            r2--;
-            c3--;
-        } else if (pos == 7) {
-            r = 2;
-            c = 0;
-            r3--;
-            c1--;
-            d2--;
-        } else if (pos == 8) {
-            r = 2;
-            c = 1;
-            r3--;
-            c2--;
-        } else if (pos == 9) {
-            r = 2;
-            c = 2;
-            r3--;
-            c3--;
-            d1--;
-        } else {
-            System.out.println("You have entered invalid position!!!");
-            return;
-        }
-        if (mat[r][c] != ' ') {
-            System.out.println("In the given position, data already exist...");
-            return;
-        }
-        mat[r][c] = value;
-    }
-
-    public static boolean isComplete(char[][] m, char v) {
-        return (m[0][0] == v && m[0][1] == v && m[0][2] == v) || (m[1][0] == v && m[1][1] == v && m[1][2] == v) || (m[2][0] == v && m[2][1] == v && m[2][2] == v) || (m[0][0] == v && m[1][0] == v && m[2][0] == v) || (m[0][1] == v && m[1][1] == v && m[2][1] == v) || (m[0][2] == v && m[1][2] == v && m[2][2] == v) || (m[0][0] == v && m[1][1] == v && m[2][2] == v) || (m[0][2] == v && m[1][1] == v && m[2][0] == v);
-    }
-
-    public static void printMatrix(char[][] mat) {
-        for (char[] arr : mat) {
-            System.out.println(Arrays.toString(arr));
-        }
-    }
-
-    public static void insertSpaces(char[][] mat) {
-        int r = mat.length, c = mat[0].length;
-        for (int i = 0; i < r; i++) {
-            for (int j = 0; j < c; j++) {
-                mat[i][j] = ' ';
+    // Get valid position input from the user
+    public static int getPosition(Scanner scanner) {
+        int position;
+        while (true) {
+            try {
+                position = scanner.nextInt();
+                if (position < 1 || position > 9) {
+                    System.out.println("Please enter a number between 1 and 9.");
+                    continue;
+                }
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input! Please enter a number.");
+                scanner.next(); // Consume the invalid input
             }
+        }
+        return position;
+    }
+
+    // Check if the board is full (draw)
+    public static boolean isBoardFull(char[][] board) {
+        for (char[] row : board) {
+            for (char cell : row) {
+                if (cell == ' ') {
+                    return false; // If any cell is empty, board is not full
+                }
+            }
+        }
+        return true; // All cells are occupied
+    }
+
+    // Initialize the board with empty spaces
+    public static void initializeBoard(char[][] board) {
+        for (char[] row : board) {
+            Arrays.fill(row, ' ');
+        }
+    }
+
+    // Make a move on the board
+    public static void makeMove(char[][] board, int position, char symbol) {
+        int row = (position - 1) / 3;
+        int col = (position - 1) % 3;
+
+        if (board[row][col] != ' ') {
+            System.out.println("Position already taken!");
+            return;
+        }
+
+        board[row][col] = symbol;
+        updateRemainingCounts(row, col);
+    }
+
+    // Update remaining counts after a move
+    public static void updateRemainingCounts(int row, int col) {
+        remainingRows[row]--;
+        remainingCols[col]--;
+        if (row == col) {
+            remainingDiagonals[0]--;
+        }
+        if (row + col == 2) {
+            remainingDiagonals[1]--;
+        }
+    }
+
+    // Check if a player has won
+    public static boolean isWinner(char[][] board, char symbol) {
+        for (int i = 0; i < 3; i++) {
+            if (board[i][0] == symbol && board[i][1] == symbol && board[i][2] == symbol) {
+                return true; // Check rows
+            }
+            if (board[0][i] == symbol && board[1][i] == symbol && board[2][i] == symbol) {
+                return true; // Check columns
+            }
+        }
+        // Check diagonals
+        return (board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) ||
+                (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol);
+    }
+
+    // Print the current board
+    public static void printBoard(char[][] board) {
+        for (char[] row : board) {
+            System.out.println(Arrays.toString(row));
         }
     }
 }
